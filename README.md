@@ -12,7 +12,8 @@ This branch ships a **mobile-first text-only slice**:
 - `mobile/App.js` – React Native UI for entering prompts and rendering story output.
 - `server/index.js` – Node HTTP server with health and generation endpoints.
 - `shared/storyGenerator.js` – story generation orchestration with provider selection.
-- `tests/storyGenerator.test.js` – baseline tests for map and story length constraints.
+- `tests/storyGenerator.test.js` – unit tests for story map and story text generation.
+- `tests/server.e2e.test.js` – end-to-end tests for the HTTP server (all routes and error cases).
 
 ## Run the API
 
@@ -77,6 +78,28 @@ Response body:
   "storyText": "...",
   "wordCount": 451
 }
+```
+
+## Testing
+
+### Unit tests
+
+```bash
+npm test
+```
+
+### End-to-end tests
+
+Starts a real server on port 18787 and exercises the full HTTP layer. No environment variables needed.
+
+```bash
+npm run test:e2e
+```
+
+### All tests
+
+```bash
+npm run test:all
 ```
 
 ## Checks
