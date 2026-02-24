@@ -99,7 +99,10 @@ function buildDeterministicStoryText(safe, storyMap) {
     .join('\n\n');
 
   const filler = `\n\n${safe.hero} remembers that teamwork, listening, and kindness make every adventure better. Back in ${safe.setting}, everyone repeats the best part of the day and giggles together.`;
-  while (story.split(/\s+/).length < 420) story += filler;
+  const fillerWords = filler.split(/\s+/).length;
+  const currentWords = story.split(/\s+/).length;
+  const needed = Math.max(0, Math.ceil((420 - currentWords) / fillerWords));
+  if (needed > 0) story += Array(needed).fill(filler).join('');
   return story;
 }
 
@@ -173,7 +176,7 @@ async function buildStoryTextWithAzure(safe, storyMap) {
   ], { json: true });
 
   const parsed = parseJsonFromModel(content);
-  if (typeof parsed.storyText !== 'string' || parsed.storyText.split(/\s+/).length < 300) {
+  if (typeof parsed.storyText !== 'string' || parsed.storyText.split(/\s+/).length < 350) {
     throw new Error('Model returned invalid story text.');
   }
   return parsed.storyText;

@@ -11,14 +11,18 @@ function sendJson(res, status, payload) {
 function parseBody(req) {
   return new Promise((resolve, reject) => {
     let raw = '';
+    let failed = false;
     req.on('data', (chunk) => {
+      if (failed) return;
       raw += chunk;
       if (raw.length > 1_000_000) {
-        reject(new Error('Request body too large'));
+        failed = true;
         req.destroy();
+        reject(new Error('Request body too large'));
       }
     });
     req.on('end', () => {
+      if (failed) return;
       try {
         resolve(raw ? JSON.parse(raw) : {});
       } catch {
@@ -38,12 +42,18 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (req.method === 'POST' && req.url === '/v1/story/generate') {
+    let body;
     try {
-      const body = await parseBody(req);
+      body = await parseBody(req);
+    } catch (error) {
+      return sendJson(res, 400, { error: error.message });
+    }
+
+    try {
       const result = await buildStory(body);
 
       if (result.wordCount < 350 || result.wordCount > 650) {
-        return sendJson(res, 502, {
+        return sendJson(res, 500, {
           error: 'Generated story length outside target range.',
           wordCount: result.wordCount
         });
@@ -60,7 +70,7 @@ const server = http.createServer(async (req, res) => {
         ...result
       });
     } catch (error) {
-      return sendJson(res, 400, { error: error.message });
+      return sendJson(res, 500, { error: error.message });
     }
   }
 
