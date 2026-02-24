@@ -5,7 +5,9 @@
   "type": "module",
   "scripts": {
     "start:server": "node server/index.js",
-    "test": "node --test tests/**/*.test.js",
-    "check": "node --check server/index.js && node --check shared/storyGenerator.js"
+    "test": "node --test tests/storyGenerator.test.js",
+    "test:e2e": "node --test tests/server.e2e.test.js",
+    "test:all": "node --test tests/storyGenerator.test.js tests/server.e2e.test.js",
+    "check": "node --check server/index.js && node --check shared/storyGenerator.js && node --check tests/server.e2e.test.js"
   }
 }
