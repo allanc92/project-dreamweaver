@@ -215,8 +215,8 @@ export function buildStoryMap(inputs) {
 }
 
 export async function buildSpeech(text) {
-  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
-  const apiKey = process.env.AZURE_OPENAI_API_KEY;
+  const endpoint = process.env.AZURE_OPENAI_TTS_ENDPOINT || process.env.AZURE_OPENAI_ENDPOINT;
+  const apiKey = process.env.AZURE_OPENAI_TTS_API_KEY || process.env.AZURE_OPENAI_API_KEY;
   const deployment = process.env.AZURE_OPENAI_TTS_DEPLOYMENT;
   const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2025-01-01-preview';
 
