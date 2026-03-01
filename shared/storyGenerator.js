@@ -213,3 +213,29 @@ export function buildStoryMap(inputs) {
   const safe = normalizeInputs(inputs || {});
   return buildDeterministicStoryMap(safe);
 }
+
+export async function buildSpeech(text) {
+  const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
+  const apiKey = process.env.AZURE_OPENAI_API_KEY;
+  const deployment = process.env.AZURE_OPENAI_TTS_DEPLOYMENT;
+  const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-06-01';
+
+  if (!endpoint || !apiKey || !deployment) {
+    throw new Error('Azure OpenAI TTS is not configured.');
+  }
+
+  const url = `${endpoint.replace(/\/$/, '')}/openai/deployments/${deployment}/audio/speech?api-version=${apiVersion}`;
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
+    body: JSON.stringify({ model: 'tts-1-hd', input: text, voice: 'nova' })
+  });
+
+  if (!response.ok) {
+    const t = await response.text();
+    throw new Error(`TTS request failed (${response.status}): ${t}`);
+  }
+
+  const buffer = await response.arrayBuffer();
+  return Buffer.from(buffer).toString('base64');
+}

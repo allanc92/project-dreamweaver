@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   View
 } from 'react-native';
+import { Audio } from 'expo-av';
 
 const API_BASE = process.env.EXPO_PUBLIC_API_BASE_URL || 'http://localhost:8787';
 
@@ -39,6 +40,8 @@ export default function App() {
   const [error, setError] = useState('');
   const [story, setStory] = useState(null);
 
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const soundRef = useRef(null);
   const settingRef = useRef(null);
   const goalRef = useRef(null);
 
@@ -75,7 +78,43 @@ export default function App() {
     }
   };
 
-  const startOver = () => {
+  const stopReading = async () => {
+    if (soundRef.current) {
+      await soundRef.current.stopAsync();
+      await soundRef.current.unloadAsync();
+      soundRef.current = null;
+    }
+    setIsSpeaking(false);
+  };
+
+  const readAloud = async () => {
+    setIsSpeaking(true);
+    setError('');
+    try {
+      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+      const response = await fetch(`${API_BASE}/v1/story/speak`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: story.storyText })
+      });
+      const payload = await response.json();
+      if (!response.ok) throw new Error(payload.error || 'Unable to load audio');
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: `data:audio/mpeg;base64,${payload.audioBase64}` }
+      );
+      soundRef.current = sound;
+      sound.setOnPlaybackStatusUpdate((status) => {
+        if (status.didJustFinish) setIsSpeaking(false);
+      });
+      await sound.playAsync();
+    } catch (err) {
+      setError('Could not play audio: ' + err.message);
+      setIsSpeaking(false);
+    }
+  };
+
+  const startOver = async () => {
+    await stopReading();
     setStory(null);
     setForm(INITIAL_FORM);
     setError('');
@@ -189,6 +228,18 @@ export default function App() {
             </View>
 
             <TouchableOpacity
+              style={[styles.button, isSpeaking && styles.stopButton]}
+              onPress={isSpeaking ? stopReading : readAloud}
+              disabled={isLoading}
+              accessibilityLabel={isSpeaking ? 'Stop reading story' : 'Read story aloud'}
+              accessibilityRole="button"
+            >
+              <Text style={styles.buttonText}>
+                {isSpeaking ? 'Stop Reading' : 'Read Aloud'}
+              </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
               style={styles.secondaryButton}
               onPress={startOver}
               accessibilityLabel="Start Over"
@@ -254,6 +305,7 @@ const styles = StyleSheet.create({
   },
   buttonDisabled: { opacity: 0.6 },
   buttonText: { color: '#fff', fontSize: 17, fontWeight: '700' },
+  stopButton: { backgroundColor: '#e05c2d' },
   loader: { marginTop: 8 },
   error: { color: '#b42318', fontWeight: '600' },
   // Story output

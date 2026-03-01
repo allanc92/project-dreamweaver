@@ -1,0 +1,20 @@
+{
+  "expo": {
+    "name": "DreamWeaver",
+    "slug": "dreamweaver",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "ios": {
+      "supportsTablet": false,
+      "bundleIdentifier": "com.dreamweaver.app"
+    },
+    "android": {
+      "package": "com.dreamweaver.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#f7f9ff"
+      }
+    }
+  }
+}

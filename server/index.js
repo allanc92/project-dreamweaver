@@ -1,10 +1,16 @@
 import http from 'node:http';
-import { buildStory } from '../shared/storyGenerator.js';
+import { buildStory, buildSpeech } from '../shared/storyGenerator.js';
 
 const PORT = process.env.PORT || 8787;
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type'
+};
+
 function sendJson(res, status, payload) {
-  res.writeHead(status, { 'Content-Type': 'application/json' });
+  res.writeHead(status, { 'Content-Type': 'application/json', ...CORS_HEADERS });
   res.end(JSON.stringify(payload));
 }
 
@@ -34,6 +40,12 @@ function parseBody(req) {
 }
 
 const server = http.createServer(async (req, res) => {
+  // CORS preflight
+  if (req.method === 'OPTIONS') {
+    res.writeHead(204, CORS_HEADERS);
+    return res.end();
+  }
+
   if (req.method === 'GET' && req.url === '/health') {
     return sendJson(res, 200, {
       ok: true,
@@ -69,6 +81,26 @@ const server = http.createServer(async (req, res) => {
         },
         ...result
       });
+    } catch (error) {
+      return sendJson(res, 500, { error: error.message });
+    }
+  }
+
+  if (req.method === 'POST' && req.url === '/v1/story/speak') {
+    let body;
+    try {
+      body = await parseBody(req);
+    } catch (error) {
+      return sendJson(res, 400, { error: error.message });
+    }
+
+    if (!body.text || typeof body.text !== 'string' || !body.text.trim()) {
+      return sendJson(res, 400, { error: 'text is required' });
+    }
+
+    try {
+      const audioBase64 = await buildSpeech(body.text.trim());
+      return sendJson(res, 200, { audioBase64 });
     } catch (error) {
       return sendJson(res, 500, { error: error.message });
     }
