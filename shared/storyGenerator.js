@@ -110,7 +110,7 @@ async function azureChatCompletion(messages, { json = false } = {}) {
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const deployment = process.env.AZURE_OPENAI_DEPLOYMENT;
-  const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-06-01';
+  const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2025-01-01-preview';
 
   if (!endpoint || !apiKey || !deployment) {
     throw new Error('Azure OpenAI is not fully configured.');
@@ -218,7 +218,7 @@ export async function buildSpeech(text) {
   const endpoint = process.env.AZURE_OPENAI_ENDPOINT;
   const apiKey = process.env.AZURE_OPENAI_API_KEY;
   const deployment = process.env.AZURE_OPENAI_TTS_DEPLOYMENT;
-  const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2024-06-01';
+  const apiVersion = process.env.AZURE_OPENAI_API_VERSION || '2025-01-01-preview';
 
   if (!endpoint || !apiKey || !deployment) {
     throw new Error('Azure OpenAI TTS is not configured.');

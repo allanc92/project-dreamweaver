@@ -18,20 +18,29 @@ DreamWeaver is a parent + child creative sandbox for generating personalized chi
 
 Create two deployments in [Azure AI Foundry](https://ai.azure.com):
 
-| Purpose | Model | Suggested deployment name |
-|---------|-------|--------------------------|
-| Story generation | `gpt-4o-mini` (2024-07-18) | `dreamweaver-story` |
-| Text-to-speech | `gpt-4o-mini-tts` | `dreamweaver-tts` |
+| Purpose | Model |
+|---------|-------|
+| Story generation | `gpt-4.1-mini` |
+| Text-to-speech | `gpt-4o-mini-tts` |
 
 ### Environment variables
+
+Copy `.env.example` to `.env` and fill in your values — `.env` is gitignored and should never be committed.
+
+```bash
+cp .env.example .env
+# then edit .env with your real endpoint, key, and deployment names
+```
+
+For a quick local test you can also export inline:
 
 ```bash
 export LLM_PROVIDER=azure
 export AZURE_OPENAI_ENDPOINT="https://<resource>.openai.azure.com"
 export AZURE_OPENAI_API_KEY="<key>"
-export AZURE_OPENAI_DEPLOYMENT="dreamweaver-story"
-export AZURE_OPENAI_TTS_DEPLOYMENT="dreamweaver-tts"
-export AZURE_OPENAI_API_VERSION="2024-06-01"
+export AZURE_OPENAI_DEPLOYMENT="<your-llm-deployment-name>"
+export AZURE_OPENAI_TTS_DEPLOYMENT="<your-tts-deployment-name>"
+export AZURE_OPENAI_API_VERSION="2025-01-01-preview"
 ```
 
 ## Run the server locally
@@ -94,14 +103,7 @@ Deploy the server to any Docker-compatible host (Azure Container Apps, Fly.io, e
 docker build -t dreamweaver .
 
 # Run with env vars
-docker run -p 8787:8787 \
-  -e LLM_PROVIDER=azure \
-  -e AZURE_OPENAI_ENDPOINT="https://<resource>.openai.azure.com" \
-  -e AZURE_OPENAI_API_KEY="<key>" \
-  -e AZURE_OPENAI_DEPLOYMENT="dreamweaver-story" \
-  -e AZURE_OPENAI_TTS_DEPLOYMENT="dreamweaver-tts" \
-  -e AZURE_OPENAI_API_VERSION="2024-06-01" \
-  dreamweaver
+docker run -p 8787:8787 --env-file .env dreamweaver
 ```
 
 Once deployed, set `EXPO_PUBLIC_API_BASE_URL` to the public HTTPS URL of your container.
