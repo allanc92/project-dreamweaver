@@ -228,7 +228,7 @@ export async function buildSpeech(text) {
   const response = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', 'api-key': apiKey },
-    body: JSON.stringify({ model: 'tts-1-hd', input: text, voice: 'nova' })
+    body: JSON.stringify({ model: 'gpt-4o-mini-tts', input: text, voice: 'nova' })
   });
 
   if (!response.ok) {

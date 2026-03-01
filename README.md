@@ -21,7 +21,7 @@ Create two deployments in [Azure AI Foundry](https://ai.azure.com):
 | Purpose | Model | Suggested deployment name |
 |---------|-------|--------------------------|
 | Story generation | `gpt-4o-mini` (2024-07-18) | `dreamweaver-story` |
-| Text-to-speech | `tts-1-hd` | `dreamweaver-tts` |
+| Text-to-speech | `gpt-4o-mini-tts` | `dreamweaver-tts` |
 
 ### Environment variables
 
