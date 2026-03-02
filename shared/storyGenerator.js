@@ -87,23 +87,16 @@ function buildDeterministicStoryText(safe, storyMap) {
     : 'Simple dialogue and playful details keep the story expressive and clear.';
 
   const detailBlocks = [
-    `${safe.hero} stretches, listens to the sounds around ${safe.setting}, and says, "Today feels ${safe.mood}, and I am ready." ${pacing}`,
-    `Soon, everyone learns that the mission is to ${safe.goal}. ${safe.hero} takes a deep breath and promises to stay kind, brave, and careful.`,
-    `${safe.hero} tries one idea, then another, and notices clues in colors, sounds, and tiny footprints. Each step teaches patience.`,
-    `A helper arrives with encouragement: "You can do this one small step at a time." ${safe.hero} smiles, adjusts the plan, and keeps going.`,
-    `At last, the mission succeeds. Friends cheer, share snacks, and talk about what they learned. The day ends warm, safe, and happy.`
+    `${safe.hero} stretches, takes a deep breath, and looks all around ${safe.setting}. The air feels fresh and full of quiet wonder. A nearby friend waves hello, and ${safe.hero} waves back with the widest smile. "Today feels ${safe.mood}," says ${safe.hero} happily, "and I think something wonderful is about to happen." With that, the adventure begins. ${pacing}`,
+    `The challenge is real: ${safe.goal}. It sounds tricky, and for a moment ${safe.hero} feels a small flutter of worry deep inside. But that is okay — a little worry just means it matters. ${safe.hero} stands up straight, takes a slow, steady breath, and says firmly, "I will try my best. And if I need help, I will ask." That is the bravest plan of all.`,
+    `${safe.hero} starts with the very first idea. It almost works — but not quite. So ${safe.hero} looks again, more carefully this time, noticing small details: colours, sounds, the tiny footprints in the ground. A second idea sparks, then a third. Each small try teaches something new. Patient and curious, ${safe.hero} keeps exploring, one careful step at a time. Every stumble is a lesson, and ${safe.hero} knows that brave adventurers do not give up — they simply try again with a wiser heart.`,
+    `Just when things feel most difficult, a kind friend appears with a warm and hopeful smile. "I have an idea," the friend says gently. "Let us work on it together, one small step at a time." ${safe.hero} listens closely, feels a new wave of hope, and nods with a grateful heart. Sharing a hard problem always makes it feel lighter — and a good friend makes everything feel possible.`,
+    `With one last careful, hopeful effort, the mission is finally complete. A joyful cheer rises up from every corner of ${safe.setting}. Everyone comes together to celebrate — sharing snacks, swapping jokes, and taking turns to tell their favourite part of the whole big adventure. ${safe.hero} beams with pride and glows with gratitude for every single friend who helped along the way. The day could not have ended any better.`
   ];
 
-  let story = storyMap
+  return storyMap
     .map((beat, i) => `${beat.title}: ${beat.summary} ${detailBlocks[i] || ''}`)
     .join('\n\n');
-
-  const filler = `\n\n${safe.hero} remembers that teamwork, listening, and kindness make every adventure better. Back in ${safe.setting}, everyone repeats the best part of the day and giggles together.`;
-  const fillerWords = filler.split(/\s+/).length;
-  const currentWords = story.split(/\s+/).length;
-  const needed = Math.max(0, Math.ceil((420 - currentWords) / fillerWords));
-  if (needed > 0) story += Array(needed).fill(filler).join('');
-  return story;
 }
 
 async function azureChatCompletion(messages, { json = false } = {}) {
