@@ -15,6 +15,16 @@
       "adaptiveIcon": {
         "backgroundColor": "#f7f9ff"
       }
-    }
+    },
+    "plugins": [
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "gradleWrapperVersion": "8.8"
+          }
+        }
+      ]
+    ]
   }
 }
