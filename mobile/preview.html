@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DreamWeaver – UI Preview</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #c9d0e0;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 40px 16px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    /* Phone shell */
+    .phone {
+      width: 390px;
+      min-height: 844px;
+      background: #f7f9ff;
+      border-radius: 48px;
+      box-shadow: 0 0 0 10px #1a1a1a, 0 32px 64px rgba(0,0,0,.45);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Status bar */
+    .status-bar {
+      background: #f7f9ff;
+      height: 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 28px 0 32px;
+      flex-shrink: 0;
+    }
+    .status-time { font-size: 15px; font-weight: 700; color: #1f2a44; }
+    .status-icons { display: flex; gap: 6px; align-items: center; }
+    .status-icons svg { fill: #1f2a44; }
+
+    /* Scroll area */
+    .scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .scroll::-webkit-scrollbar { display: none; }
+
+    /* Typography */
+    .header {
+      font-size: 32px;
+      font-weight: 700;
+      color: #1f2a44;
+      line-height: 1.1;
+    }
+    .subheader {
+      font-size: 16px;
+      color: #44516d;
+      margin-top: 4px;
+      margin-bottom: 8px;
+    }
+
+    /* Input groups */
+    .input-group { display: flex; flex-direction: column; gap: 6px; }
+    .label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #44516d;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .input {
+      background: #fff;
+      border: 1px solid #d4dcf5;
+      border-radius: 16px;
+      padding: 12px 14px;
+      font-size: 16px;
+      color: #1f2a44;
+      outline: none;
+      width: 100%;
+    }
+    .input::placeholder { color: #9aa3b2; }
+    .input:focus { border-color: #3d63ff; box-shadow: 0 0 0 3px rgba(61,99,255,.12); }
+
+    /* Age band pills */
+    .age-band-row { display: flex; gap: 8px; }
+    .age-pill {
+      flex: 1;
+      border: 1px solid #3d63ff;
+      border-radius: 18px;
+      padding: 10px;
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3d63ff;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      background: transparent;
+    }
+    .age-pill.active { background: #3d63ff; color: #fff; }
+
+    /* Mood chips */
+    .mood-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mood-chip {
+      border: 1px solid #3d63ff;
+      border-radius: 14px;
+      padding: 7px 14px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #3d63ff;
+      cursor: pointer;
+      transition: background .15s, color .15s;
+      background: transparent;
+    }
+    .mood-chip.active { background: #3d63ff; color: #fff; }
+
+    /* Primary button */
+    .button {
+      margin-top: 8px;
+      background: #3d63ff;
+      border: none;
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #fff;
+      width: 100%;
+      cursor: pointer;
+      text-align: center;
+    }
+    .button.disabled { opacity: 0.6; cursor: default; }
+    .button.stop { background: #e05c2d; }
+
+    /* Secondary button */
+    .secondary-button {
+      border: 1px solid #3d63ff;
+      border-radius: 18px;
+      padding: 14px;
+      font-size: 17px;
+      font-weight: 700;
+      color: #3d63ff;
+      background: transparent;
+      width: 100%;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    /* Story card */
+    .story-card {
+      margin-top: 10px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #d4dcf5;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .section-header {
+      font-size: 14px;
+      font-weight: 700;
+      color: #44516d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .divider { height: 1px; background: #d4dcf5; margin: 4px 0; }
+    .beat-line { font-size: 14px; color: #334155; line-height: 1.5; }
+    .story-body { font-size: 15px; line-height: 22px; color: #0f172a; }
+    .word-count { font-weight: 400; color: #9aa3b2; }
+
+    /* Tab indicator at bottom */
+    .home-indicator {
+      height: 34px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .home-bar {
+      width: 120px;
+      height: 5px;
+      background: #1f2a44;
+      border-radius: 3px;
+      opacity: 0.2;
+    }
+
+    /* Toggle state helpers */
+    .screen { display: none; }
+    .screen.active { display: contents; }
+
+    /* View switcher (outside phone, for preview only) */
+    .switcher {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      background: rgba(255,255,255,.85);
+      backdrop-filter: blur(8px);
+      padding: 8px 12px;
+      border-radius: 40px;
+      box-shadow: 0 4px 16px rgba(0,0,0,.15);
+      font-family: -apple-system, sans-serif;
+    }
+    .switcher button {
+      background: #3d63ff;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 7px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      opacity: .5;
+      transition: opacity .15s;
+    }
+    .switcher button.active { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="phone">
+  <!-- Status bar -->
+  <div class="status-bar">
+    <span class="status-time">9:41</span>
+    <div class="status-icons">
+      <!-- Signal -->
+      <svg width="17" height="12" viewBox="0 0 17 12"><rect x="0" y="7" width="3" height="5" rx="1"/><rect x="4.5" y="4.5" width="3" height="7.5" rx="1"/><rect x="9" y="2" width="3" height="10" rx="1"/><rect x="13.5" y="0" width="3" height="12" rx="1" opacity=".3"/></svg>
+      <!-- Wifi -->
+      <svg width="16" height="12" viewBox="0 0 16 12"><path d="M8 9.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3zm0-3.5a6 6 0 0 1 4.24 1.76l-1.42 1.42A4 4 0 0 0 8 8a4 4 0 0 0-2.83 1.17L3.76 7.76A6 6 0 0 1 8 6zm0-3.5a9.5 9.5 0 0 1 6.72 2.78L13.3 6.7A7.5 7.5 0 0 0 8 4.5a7.5 7.5 0 0 0-5.3 2.2L1.28 5.28A9.5 9.5 0 0 1 8 2.5z" opacity=".9"/></svg>
+      <!-- Battery -->
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0" y="1" width="22" height="10" rx="2.5" stroke="#1f2a44" stroke-width="1" fill="none"/><rect x="22.5" y="3.5" width="2" height="5" rx="1" fill="#1f2a44" opacity=".4"/><rect x="1.5" y="2.5" width="16" height="7" rx="1.5" fill="#1f2a44"/></svg>
+    </div>
+  </div>
+
+  <!-- SCREEN 1: Form -->
+  <div class="scroll" id="screen-form">
+    <div class="header">DreamWeaver ✨</div>
+    <div class="subheader">Create a story together in minutes.</div>
+
+    <!-- Age band -->
+    <div class="input-group">
+      <div class="label">Who's the story for?</div>
+      <div class="age-band-row">
+        <div class="age-pill" onclick="toggleAge(this)">Little ones (2–3)</div>
+        <div class="age-pill active" onclick="toggleAge(this)">Growing readers (4–6)</div>
+      </div>
+    </div>
+
+    <!-- Hero -->
+    <div class="input-group">
+      <div class="label">Who's the hero?</div>
+      <input class="input" type="text" placeholder="e.g. Milo the koala" value="Milo the koala" readonly />
+    </div>
+
+    <!-- Setting -->
+    <div class="input-group">
+      <div class="label">Where does it happen?</div>
+      <input class="input" type="text" placeholder="e.g. a moonlit beach" value="a moonlit beach" readonly />
+    </div>
+
+    <!-- Goal -->
+    <div class="input-group">
+      <div class="label">What's their mission?</div>
+      <input class="input" type="text" placeholder="e.g. return a glowing shell" value="return a glowing shell" readonly />
+    </div>
+
+    <!-- Mood -->
+    <div class="input-group">
+      <div class="label">What's the mood?</div>
+      <div class="mood-row">
+        <div class="mood-chip" onclick="toggleMood(this)">Silly</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Adventurous</div>
+        <div class="mood-chip active" onclick="toggleMood(this)">Cozy</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Magical</div>
+        <div class="mood-chip" onclick="toggleMood(this)">Brave</div>
+      </div>
+    </div>
+
+    <button class="button" onclick="showStory()">Generate Story</button>
+  </div>
+
+  <!-- SCREEN 2: Story output -->
+  <div class="scroll" id="screen-story" style="display:none;">
+    <div class="header">DreamWeaver ✨</div>
+    <div class="subheader">Create a story together in minutes.</div>
+
+    <div class="story-card">
+      <div class="section-header">Story Blueprint</div>
+      <div class="beat-line">1. The Ordinary World: Milo the koala lives peacefully on a moonlit beach, collecting shiny treasures.</div>
+      <div class="beat-line">2. The Call: A mysterious glowing shell washes ashore — and it belongs to a family far away.</div>
+      <div class="beat-line">3. The Journey: Milo sets off across the silver sand, facing gentle waves and a curious crab.</div>
+      <div class="beat-line">4. The Challenge: The tide rises fast! Milo must find a brave way across the rushing water.</div>
+      <div class="beat-line">5. The Return: Shell delivered, Milo heads home under a sky full of stars, heart full of warmth.</div>
+      <div class="divider"></div>
+      <div class="section-header">Your Story <span class="word-count">· 148 words</span></div>
+      <div class="story-body">
+        Once upon a time, on a beach kissed by moonlight, there lived a small koala named Milo. Every night he walked the shore, collecting pebbles and sea-glass that caught the silver glow.<br><br>
+        One evening, a beautiful shell tumbled through the waves — but it wasn't just any shell. It shimmered with warmth, and Milo knew at once it was lost.<br><br>
+        "I'll find its family," he said softly.<br><br>
+        He padded along the shore, past a surprised crab who offered directions, and over slippery rocks that gleamed like mirrors. When the tide rushed in, Milo hugged a friendly driftwood log and floated safely across.<br><br>
+        At last he found a little shell-house tucked in the dunes. A tiny sea-snail family gasped with joy. "Our treasure!" they cheered.<br><br>
+        Milo smiled all the way home, the stars winking above him like old friends.
+      </div>
+    </div>
+
+    <button class="button" id="read-btn" onclick="toggleRead()">Read Aloud</button>
+    <button class="secondary-button" onclick="showForm()">Start Over</button>
+  </div>
+
+  <div class="home-indicator"><div class="home-bar"></div></div>
+</div>
+
+<!-- Preview switcher -->
+<div class="switcher">
+  <button id="btn-form" class="active" onclick="showForm()">Form view</button>
+  <button id="btn-story" onclick="showStory()">Story view</button>
+</div>
+
+<script>
+  function showForm() {
+    document.getElementById('screen-form').style.display = 'flex';
+    document.getElementById('screen-story').style.display = 'none';
+    document.getElementById('btn-form').classList.add('active');
+    document.getElementById('btn-story').classList.remove('active');
+  }
+  function showStory() {
+    document.getElementById('screen-form').style.display = 'none';
+    document.getElementById('screen-story').style.display = 'flex';
+    document.getElementById('btn-form').classList.remove('active');
+    document.getElementById('btn-story').classList.add('active');
+  }
+  function toggleAge(el) {
+    document.querySelectorAll('.age-pill').forEach(p => p.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function toggleMood(el) {
+    document.querySelectorAll('.mood-chip').forEach(c => c.classList.remove('active'));
+    el.classList.add('active');
+  }
+  function toggleRead() {
+    const btn = document.getElementById('read-btn');
+    const reading = btn.classList.toggle('stop');
+    btn.textContent = reading ? 'Stop Reading' : 'Read Aloud';
+  }
+</script>
+</body>
+</html>
