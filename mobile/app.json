@@ -11,10 +11,7 @@
       "bundleIdentifier": "com.dreamweaver.app"
     },
     "android": {
-      "package": "com.dreamweaver.app",
-      "adaptiveIcon": {
-        "backgroundColor": "#f7f9ff"
-      }
+      "package": "com.dreamweaver.app"
     }
   }
 }
